@@ -16,8 +16,10 @@ class BaseModel:
     """A base class for all hbnb models"""
     if os.getenv("HBNB_TYPE_STORAGE") == "db":
         id = Column(String(60), nullable=False, primary_key=True)
-        created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-        updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+        created_at = Column(DateTime, nullable=False,
+                            default=datetime.utcnow())
+        updated_at = Column(DateTime, nullable=False,
+                            default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
@@ -48,8 +50,8 @@ class BaseModel:
 
     def to_dict(self):
         dictionary = {
-                key: value.isoformat() if isinstance(value, datetime) else value
-                for key, value in self.__dict__.items()
+                key: value.isoformat() if isinstance(value, datetime) else
+                value for key, value in self.__dict__.items()
         }
         dictionary['__class__'] = type(self).__name__
         dictionary.pop('_sa_instance_state', None)

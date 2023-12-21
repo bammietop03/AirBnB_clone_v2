@@ -9,8 +9,10 @@ if os.getenv("HBNB_TYPE_STORAGE") == "db":
     place_amenity = Table(
             'place_amenity',
             Base.metadata,
-            Column('place_id', String(60), ForeignKey('places.id'), primary_key=True, nullable=False),
-            Column('amenity_id', String(60), ForeignKey('amenities.id'), primary_key=True, nullable=False)
+            Column('place_id', String(60), ForeignKey('places.id'),
+                   primary_key=True, nullable=False),
+            Column('amenity_id', String(60), ForeignKey('amenities.id'),
+                   primary_key=True, nullable=False)
             )
 
 
@@ -58,7 +60,7 @@ class Place(BaseModel, Base):
             if review.place_id == self.id:
                 reviews_list.append(review)
         return reviews_list
-    
+
     if os.getenv('HBNB_TYPE_STORAGE') != 'db':
         @property
         def amenities(self):
@@ -68,7 +70,7 @@ class Place(BaseModel, Base):
             amenities_list = []
             for amenity_id in self.amenity_ids:
                 amenityObj = models.storage.all().get("Amenity.{}"
-                                                       .format(amenity_id))
+                                                      .format(amenity_id))
                 if amenityObj:
                     amenities_list.append(amenityObj)
             return amenities_list
