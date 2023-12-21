@@ -12,7 +12,8 @@ from models.amenity import Amenity
 from models.review import Review
 
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
-            "Review": Review, "State": State, "User": User}
+           "Review": Review, "State": State, "User": User}
+
 
 class DBStorage:
     __engine = None
@@ -33,7 +34,6 @@ class DBStorage:
         if environ.get('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
-
     def all(self, cls=None):
         session = self.__session
 
@@ -44,7 +44,8 @@ class DBStorage:
             for cls in classes:
                 objects.extend(session.query(cls).all())
 
-        return {'{}.{}'.format(type(obj).__name__, obj.id): obj for obj in objects}
+        return {'{}.{}'.format(type(obj).__name__, obj.id): obj for obj
+                in objects}
 
     def new(self, obj):
         if obj:
@@ -59,7 +60,8 @@ class DBStorage:
 
     def reload(self):
         Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
 
