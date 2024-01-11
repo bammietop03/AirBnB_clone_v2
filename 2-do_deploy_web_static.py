@@ -1,52 +1,33 @@
 #!/usr/bin/python3
 """
-Fabric script that distributes an archive to your web servers
+Based on the file 1-pack_web_static.py, this script distributes an
+archive to the web servers, using the function do_deploy.
 """
+from fabric.api import env, put, run, sudo
+from os import path
 
-from datetime import datetime
-from fabric.api import *
-import os
-
-env.hosts = ["54.87.208.50", "100.26.50.175"]
-env.user = "ubuntu"
-
-
-def do_pack():
-    """
-        return the archive path if archive has generated correctly.
-    """
-
-    local("mkdir -p versions")
-    date = datetime.now().strftime("%Y%m%d%H%M%S")
-    archivedPath = "versions/web_static_{}.tgz".format(date)
-    result = local("tar -cvzf {} web_static".format(archivedPath))
-
-    if result.succeeded:
-        return archivedPath
-    else:
-        return None
+env.hosts = ['54.87.208.50', '100.26.50.175']
 
 
 def do_deploy(archive_path):
-    """
-        Distribute archive.
-    """
-    if os.path.exists(archive_path):
-        archived_file = archive_path[9:]
-        newest_version = "/data/web_static/releases/" + archived_file[:-4]
-        archived_file = "/tmp/" + archived_file
+    """Distributes an archive to web servers."""
+    if not path.exists(archive_path):
+        return False
+
+    try:
+        filename = path.basename(archive_path).split(".")[0]
+        release_path = f"/data/web_static/releases/{filename}"
+
+        print("Basename", path.basename(archive_path).split(".")[0])
         put(archive_path, "/tmp/")
-        run("sudo mkdir -p {}".format(newest_version))
-        run("sudo tar -xzf {} -C {}/".format(archived_file,
-                                             newest_version))
-        run("sudo rm {}".format(archived_file))
-        run("sudo mv {}/web_static/* {}".format(newest_version,
-                                                newest_version))
-        run("sudo rm -rf {}/web_static".format(newest_version))
-        run("sudo rm -rf /data/web_static/current")
-        run("sudo ln -s {} /data/web_static/current".format(newest_version))
 
-        print("New version deployed!")
+        run(f"mkdir -p {release_path}")
+        run(f"tar -xzf /tmp/{path.basename(archive_path)} -C {release_path}")
+        run(f"rm /tmp/{path.basename(archive_path)}")
+
+        sudo(f"mv {release_path}/web_static/* {release_path}/")
+        sudo("rm -rf /data/web_static/current")
+        sudo(f"ln -s {release_path} /data/web_static/current")
         return True
-
-    return False
+    except Exception as e:
+        return False
