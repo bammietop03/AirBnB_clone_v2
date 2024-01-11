@@ -15,16 +15,22 @@ def do_pack():
     """
         return the archive path if archive has generated correctly.
     """
+    if not os.path.exists('versions'):
+        os.makedirs('versions')
 
-    local("mkdir -p versions")
-    date = datetime.now().strftime("%Y%m%d%H%M%S")
-    archivedPath = "versions/web_static_{}.tgz".format(date)
-    result = local("tar -cvzf {} web_static".format(archivedPath))
+    archive_name = "web_static_{}.tgz".format(
+        datetime.now().strftime("%Y%m%d%H%M%S")
+    )
+    print("Packing web_static to versions/{}".format(archive_name))
+    result = local("tar -cvzf versions/{} web_static".format(archive_name))
 
-    if result.succeeded:
-        return archivedPath
-    else:
+    if result.failed:
         return None
+    else:
+        archive_path = f"versions/{archive_name}"
+        archive_size = os.path.getsize("./versions/{}".format(archive_name))
+        print(f"web_static packed: {archive_path} -> {archive_size}Bytes")
+        return archive_path
 
 
 def do_deploy(archive_path):
