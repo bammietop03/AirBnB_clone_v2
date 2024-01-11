@@ -7,7 +7,7 @@ import os
 
 
 env.hosts = ["54.87.208.50", "100.26.50.175"]
-env.user = "ubuntu"
+env.user = 'ubuntu'
 
 
 def do_pack():
@@ -26,7 +26,6 @@ def do_pack():
 
 
 def do_deploy(archive_path):
-    # deploys
     fd = archive_path.split('/')[1]
     try:
         put(archive_path, '/tmp/{}'.format(fd))
