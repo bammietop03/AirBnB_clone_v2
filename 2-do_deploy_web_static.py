@@ -44,11 +44,3 @@ def do_deploy(archive_path):
     except:
         print("New version not deployed...")
         return False
-
-
-def deploy():
-    # automates everything
-    ap = do_pack()
-    if ap is None:
-        return False
-    return do_deploy(ap)
