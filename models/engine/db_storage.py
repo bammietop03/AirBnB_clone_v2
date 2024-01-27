@@ -68,3 +68,8 @@ class DBStorage:
     @property
     def session(self):
         return self.__session
+
+    def close(self):
+        """Close the current session"""
+        self.__session.close()
+
