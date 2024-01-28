@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Importing Flask to run the web app"""
+"""a script that starts a Flask web application"""
 from flask import Flask, render_template
 from models import storage
 from models.state import State
@@ -9,8 +9,8 @@ app = Flask(__name__)
 
 
 @app.teardown_appcontext
-def close(self):
-    """ Method to close the session """
+def teardown_session(exception):
+    """Remove the current SQLAlchemy Session"""
     storage.close()
 
 
