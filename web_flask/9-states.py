@@ -15,14 +15,22 @@ def teardown_session(exception):
 
 
 @app.route('/states', strict_slashes=False)
+def states():
+    data = storage.all(State).values()
+    data_sorted = sorted(data, key=lambda x: x.name)
+    return render_template("9-states.html", states=data_sorted,
+                           mode='none', ids=None)
+
+
 @app.route('/states/<id>', strict_slashes=False)
-def states(id=None):
+def states_(id):
     data = storage.all(State).values()
     data_sorted = sorted(data, key=lambda x: x.name)
     for state in data_sorted:
         if id == state.id:
             return render_template("9-states.html", states=state, mode='id')
-    return render_template("9-states.html", states=data_sorted, mode='none', ids=id)
+    return render_template("9-states.html", states=data_sorted,
+                           mode='none', ids=id)
 
 
 if __name__ == "__main__":
